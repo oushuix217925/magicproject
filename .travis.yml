@@ -1,19 +1,37 @@
 language: java
-sudo: false # faster builds
 
 jdk:
-    - openjdk10
-    - openjdk9
-    - oraclejdk8
+  - oraclejdk8
 
-script: "mvn clean package"
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer # Updates JDK 8 to the latest available.
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - .buildscript/deploy_snapshot.sh
+
+env:
+  global:
+    - secure: "TM2N/yo3azbA7+J6WG0W1RmK4vvS7b4JzvJP8NcXpoZCQw2Je1nQqmKS3F/04/DEUf8+SKVh2thKEeUxLN8knCO0OQLxeKIFj9PLvtgHnV8beB+pPxUdpEvMlB6ISeDsOZ098zoax28zfMwR7+uMeGe2VbtTSpwtqt4jkWx3ooA="
+    - secure: "A5flBI/PCmmxuHjqG73CIXqHYg8X1GWloA3jv0zrhCAuK5m3nAvt7JY2qom22ttEY9JI32dlArxhusrKib18gKNgZbxzoN5PydkG6T0uuGZw+uZM6jPiTlvkC0F4ikL6lg1dBap4BoakDMwAPfb11UpETamBGKOWdopLqw6T6w0="
+
+branches:
+  except:
+    - gh-pages
+
+notifications:
+  email: false
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2
 
 before_install:
-  - wget https://github.com/apache/incubator-dubbo-spring-boot-project/archive/47f23a6ccb237103ba2c6383492a926230d91347.zip
-  - unzip 47f23a6ccb237103ba2c6383492a926230d91347.zip
-  - cp -rT incubator-dubbo-spring-boot-project-47f23a6ccb237103ba2c6383492a926230d91347 ./
-  - rm -r incubator-dubbo-spring-boot-project-47f23a6ccb237103ba2c6383492a926230d91347
-  - rm 47f23a6ccb237103ba2c6383492a926230d91347.zip
+  - wget https://github.com/square/moshi/archive/8e5d441e2cedf3d14a0988537cd31edfa86b99fd.zip
+  - unzip 8e5d441e2cedf3d14a0988537cd31edfa86b99fd.zip
+  - cp -rT moshi-8e5d441e2cedf3d14a0988537cd31edfa86b99fd ./
+  - rm -r moshi-8e5d441e2cedf3d14a0988537cd31edfa86b99fd
+  - rm 8e5d441e2cedf3d14a0988537cd31edfa86b99fd.zip
