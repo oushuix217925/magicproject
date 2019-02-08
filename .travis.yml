@@ -1,19 +1,31 @@
 language: java
-sudo: false # faster builds
 
+# Since Jackson 2.7, build requires jdk7, although module itself works on jdk6 still (for now)
 jdk:
-    - openjdk10
-    - openjdk9
-    - oraclejdk8
+  - openjdk7
+  - openjdk8
 
-script: "mvn clean package"
-
+# Below this line is configuration for deploying to the Sonatype OSS repo
+# http://blog.xeiam.com/2013/05/configure-travis-ci-to-deploy-snapshots.html
+before_install: "git clone -b travis `git config --get remote.origin.url` target/travis"
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - "mvn source:jar javadoc:jar deploy --settings target/travis/settings.xml"
+  - "mvn -B cobertura:cobertura coveralls:report"
+
+# whitelist
+branches:
+  only:
+    - master
+    - "2.10"
+
+env:
+  global:
+    - secure: "ZIFMeNzZCvLYWICiUyHFSm8Ypz6lYFbF/+LGz6a+Sh8B9tSnvYvlrE4gSFJj3NzRWY0RG/vizoyFEpVgxOnzXDMLuuy/dreupnHR1FfVmiaiceK4JHRwAzl0lQzr2hdVwJbqpX0GfrxKmbg8Jvv9WPKtfM6X4167ElVj4O/8IRc="
+    - secure: "VOC/J8eFbM2OeysBp0Gx0G73MySRATCoN7hc9Ok0kJXE/dbE/2KOoFlTwwxUgErwJXkjJKKXafYcbq/22S7wkaoDW5XAvplSu3skxdE0NRGVzozcDMXO5UoGlt9Ti4XIBMCvy7bB/NO+J5IgNedCtcNnBsrGZCdodW3DTYtqQLs="
 
 before_install:
-  - wget https://github.com/apache/incubator-dubbo-spring-boot-project/archive/47f23a6ccb237103ba2c6383492a926230d91347.zip
-  - unzip 47f23a6ccb237103ba2c6383492a926230d91347.zip
-  - cp -rT incubator-dubbo-spring-boot-project-47f23a6ccb237103ba2c6383492a926230d91347 ./
-  - rm -r incubator-dubbo-spring-boot-project-47f23a6ccb237103ba2c6383492a926230d91347
-  - rm 47f23a6ccb237103ba2c6383492a926230d91347.zip
+  - wget https://github.com/FasterXML/jackson-databind/archive/5f453187344922b21346100fe7f442922d0bd554.zip
+  - unzip 5f453187344922b21346100fe7f442922d0bd554.zip
+  - cp -rT jackson-databind-5f453187344922b21346100fe7f442922d0bd554 ./
+  - rm -r jackson-databind-5f453187344922b21346100fe7f442922d0bd554
+  - rm 5f453187344922b21346100fe7f442922d0bd554.zip
