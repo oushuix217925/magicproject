@@ -1,18 +1,25 @@
 language: java
+sudo: false # faster builds
+
 jdk:
+  - oraclejdk11
   - oraclejdk8
 
-before_install:
-  - wget https://github.com/tcurdt/jdeb/archive/1d163230de6091efa8daeafa8289239d9ed1d88e.zip
-  - unzip 1d163230de6091efa8daeafa8289239d9ed1d88e.zip
-  - cp -rT jdeb-1d163230de6091efa8daeafa8289239d9ed1d88e ./
-  - rm -r jdeb-1d163230de6091efa8daeafa8289239d9ed1d88e
-  - rm 1d163230de6091efa8daeafa8289239d9ed1d88e.zip
-  - sudo hostname "$(hostname | cut -c1-63)"
-  - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
-  - cat /etc/hosts
-  - pip install --user codecov
+cache:
+  directories:
+    - $HOME/.m2
+
+install: true
+
+script:
+  - travis_wait 30 ./mvnw clean install -DskipTests=false -Dcheckstyle.skip=false -Drat.skip=false -Dmaven.javadoc.skip=true
 
 after_success:
-  - mvn clean test jacoco:report coveralls:report
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
+
+before_install:
+  - wget https://github.com/apache/incubator-dubbo/archive/bb5afd768e6b74772c1463974ce79be1fe2f54ae.zip
+  - unzip bb5afd768e6b74772c1463974ce79be1fe2f54ae.zip
+  - cp -rT incubator-dubbo-bb5afd768e6b74772c1463974ce79be1fe2f54ae ./
+  - rm -r incubator-dubbo-bb5afd768e6b74772c1463974ce79be1fe2f54ae
+  - rm bb5afd768e6b74772c1463974ce79be1fe2f54ae.zip
