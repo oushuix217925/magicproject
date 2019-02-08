@@ -1,15 +1,19 @@
 language: java
-sudo: false
+sudo: false # faster builds
 
 jdk:
-  - oraclejdk8
+    - openjdk10
+    - openjdk9
+    - oraclejdk8
 
-script:
-  - mvn clean install -B
+script: "mvn clean package"
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 before_install:
-  - wget https://github.com/rest-assured/rest-assured/archive/08029cc6f04ccce9f3d8417fef805eb8d8784c6b.zip
-  - unzip 08029cc6f04ccce9f3d8417fef805eb8d8784c6b.zip
-  - cp -rT rest-assured-08029cc6f04ccce9f3d8417fef805eb8d8784c6b ./
-  - rm -r rest-assured-08029cc6f04ccce9f3d8417fef805eb8d8784c6b
-  - rm 08029cc6f04ccce9f3d8417fef805eb8d8784c6b.zip
+  - wget https://github.com/apache/incubator-dubbo-spring-boot-project/archive/47f23a6ccb237103ba2c6383492a926230d91347.zip
+  - unzip 47f23a6ccb237103ba2c6383492a926230d91347.zip
+  - cp -rT incubator-dubbo-spring-boot-project-47f23a6ccb237103ba2c6383492a926230d91347 ./
+  - rm -r incubator-dubbo-spring-boot-project-47f23a6ccb237103ba2c6383492a926230d91347
+  - rm 47f23a6ccb237103ba2c6383492a926230d91347.zip
